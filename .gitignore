@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-firefox
+dist-safari
+chrome-artifacts
+firefox-artifacts
+safari-artifacts
+safari
+*.zip
+.DS_Store
