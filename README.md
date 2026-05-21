@@ -95,4 +95,4 @@ Chrome, Brave, Edge, Arc (Chromium MV3).
 
 ## License
 
-Private — Hagersew project.
+MIT — see [LICENSE](LICENSE).
