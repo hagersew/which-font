@@ -91,7 +91,7 @@ src/
 
 ## Browser support
 
-Chrome, Brave, Edge, Arc (Chromium MV3).
+Chrome, Brave, Edge, Arc (Chromium MV3), Firefox (MV3), and Safari.
 
 ## License
 
