@@ -12,11 +12,13 @@ function resolveColorMode(mode: string): 'light' | 'dark' {
   return mode === 'dark' ? 'dark' : 'light';
 }
 
-function syncHostTextColor(mode: 'light' | 'dark'): void {
+function syncHostStyles(mode: 'light' | 'dark'): void {
   const host = document.getElementById(HOST_ID);
+  const root = document.getElementById(ROOT_ID);
   if (!host) return;
   const textColor = mode === 'dark' ? '#F7FAFC' : '#1A202C';
   host.style.setProperty('color', textColor, 'important');
+  root?.style.setProperty('color-scheme', mode);
 }
 
 function ContentShell() {
@@ -38,7 +40,7 @@ function ContentShell() {
   }, [colorModePref, setColorMode]);
 
   useEffect(() => {
-    syncHostTextColor(resolvedMode);
+    syncHostStyles(resolvedMode);
   }, [resolvedMode]);
 
   useEffect(() => {
@@ -66,7 +68,6 @@ function ContentShell() {
 
   return (
     <Box
-      id={ROOT_ID}
       data-theme={resolvedMode}
       position="fixed"
       inset={0}

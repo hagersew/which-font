@@ -1,11 +1,25 @@
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, type Root } from 'react-dom/client';
 import createCache from '@emotion/cache';
 import { CacheProvider } from '@emotion/react';
-import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
-import { HOST_ID, ROOT_ID } from '@/lib/constants';
-import { theme } from '@/theme';
+import {
+  HOST_CLASS,
+  HOST_ID,
+  PORTAL_CLASS,
+  PORTAL_ID,
+  ROOT_CLASS,
+  ROOT_ID,
+} from '@/lib/constants';
+import { getInspectionActive } from '@/lib/storage';
+import type { Message } from '@/lib/messaging';
+import {
+  cleanupPageStyleArtifacts,
+  WhichFontChakraProvider,
+} from '@/providers/WhichFontChakraProvider';
+import { stopInspector } from './inspector/controller';
 import { ContentApp } from './ContentApp';
+
+let reactRoot: Root | null = null;
 
 function isolateShadowHost(host: HTMLElement): void {
   host.style.all = 'initial';
@@ -23,15 +37,24 @@ function isolateShadowHost(host: HTMLElement): void {
 
 function mount(): void {
   if (document.getElementById(HOST_ID)) return;
+  cleanupPageStyleArtifacts();
 
   const host = document.createElement('div');
   host.id = HOST_ID;
+  host.className = HOST_CLASS;
   isolateShadowHost(host);
   document.documentElement.appendChild(host);
 
   const shadow = host.attachShadow({ mode: 'open' });
+
+  const portalRoot = document.createElement('div');
+  portalRoot.id = PORTAL_ID;
+  portalRoot.className = PORTAL_CLASS;
+  shadow.appendChild(portalRoot);
+
   const mountPoint = document.createElement('div');
   mountPoint.id = ROOT_ID;
+  mountPoint.className = ROOT_CLASS;
   shadow.appendChild(mountPoint);
 
   const emotionCache = createCache({
@@ -39,21 +62,43 @@ function mount(): void {
     container: shadow,
   });
 
-  const root = createRoot(mountPoint);
-  root.render(
+  reactRoot = createRoot(mountPoint);
+  reactRoot.render(
     <StrictMode>
       <CacheProvider value={emotionCache}>
-        <ChakraProvider theme={theme} resetCSS>
-          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <WhichFontChakraProvider portalContainer={portalRoot}>
           <ContentApp />
-        </ChakraProvider>
+        </WhichFontChakraProvider>
       </CacheProvider>
     </StrictMode>,
   );
 }
 
+function unmount(): void {
+  stopInspector();
+  reactRoot?.unmount();
+  reactRoot = null;
+  document.getElementById(HOST_ID)?.remove();
+  cleanupPageStyleArtifacts();
+}
+
+function applyInspectionState(active: boolean): void {
+  if (active) mount();
+  else unmount();
+}
+
+function init(): void {
+  chrome.runtime.onMessage.addListener((msg: Message) => {
+    if (msg.type === 'INSPECTION_STATE') {
+      applyInspectionState(msg.active);
+    }
+  });
+
+  void getInspectionActive().then(applyInspectionState);
+}
+
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', mount);
+  document.addEventListener('DOMContentLoaded', init);
 } else {
-  mount();
+  init();
 }

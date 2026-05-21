@@ -1,10 +1,13 @@
 import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
-import { ROOT_ID } from '@/lib/constants';
+import { EXTENSION_PREFIX, ROOT_CLASS, ROOT_ID } from '@/lib/constants';
 
 const config: ThemeConfig = {
   initialColorMode: 'light',
   useSystemColorMode: false,
+  cssVarPrefix: EXTENSION_PREFIX,
 };
+
+const ROOT_SELECTOR = `#${ROOT_ID}.${ROOT_CLASS}`;
 
 export const theme = extendTheme({
   config,
@@ -69,9 +72,10 @@ export const theme = extendTheme({
   },
   styles: {
     global: {
-      '*, *::before, *::after': { boxSizing: 'border-box' },
-      [`#${ROOT_ID}`]: {
-        color: 'var(--chakra-colors-text-primary, #1A202C)',
+      [`${ROOT_SELECTOR}, ${ROOT_SELECTOR} *, ${ROOT_SELECTOR} *::before, ${ROOT_SELECTOR} *::after`]:
+        { boxSizing: 'border-box' },
+      [ROOT_SELECTOR]: {
+        color: `var(--${EXTENSION_PREFIX}-colors-text-primary, #1A202C)`,
         fontSize: '16px',
         lineHeight: '1.5',
         WebkitTextFillColor: 'currentColor',
