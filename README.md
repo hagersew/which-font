@@ -70,12 +70,10 @@ Creates `chrome-artifacts/which-font-chrome-{version}.zip` from `dist/`.
 
 ## Permissions
 
-| Permission   | Why                          |
-| ------------ | ---------------------------- |
-| `storage`    | Theme, history, pinned cards |
-| `scripting`  | Tab messaging                |
-| `activeTab`  | Active tab context           |
-| `<all_urls>` | Inspect elements on any site |
+| Permission / access | Why                                      |
+| ------------------- | ---------------------------------------- |
+| `storage`           | Theme, history, pinned cards             |
+| Content script      | Runs on `<all_urls>` to inspect elements |
 
 ## Project structure
 

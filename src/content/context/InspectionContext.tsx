@@ -35,6 +35,7 @@ interface InspectionContextValue {
   closeCard: (id: string) => void;
   closeTopCard: () => void;
   closeAllUnpinned: () => void;
+  handleEscape: () => void;
   pinCard: (id: string, pinned: boolean) => void;
   updateCardPosition: (id: string, pos: { x: number; y: number }) => void;
 }
@@ -152,35 +153,39 @@ export function InspectionProvider({ children }: { children: ReactNode }) {
     return () => stopInspector();
   }, [inspectionActive, addCard]);
 
+  const handleEscape = useCallback(() => {
+    setCards((prev) => {
+      const unpinned = prev.filter((c) => !c.pinned);
+      if (unpinned.length > 0) {
+        const top = unpinned[unpinned.length - 1];
+        const next = prev.filter((c) => c.id !== top.id);
+        void persistPinned(next);
+        return next;
+      }
+      setInspectionActiveState(false);
+      stopInspector();
+      setHoverRect(null);
+      chrome.runtime.sendMessage({
+        type: 'INSPECTION_SET',
+        active: false,
+      } satisfies Message);
+      return prev;
+    });
+  }, [persistPinned]);
+
   useEffect(() => {
     const listener = (msg: Message) => {
       if (msg.type === 'INSPECTION_SET' || msg.type === 'INSPECTION_STATE') {
         setInspectionActive(msg.active);
       }
       if (msg.type === 'CLOSE_CARDS') {
-        setCards((prev) => {
-          const unpinned = prev.filter((c) => !c.pinned);
-          if (unpinned.length > 0) {
-            const top = unpinned[unpinned.length - 1];
-            const next = prev.filter((c) => c.id !== top.id);
-            void persistPinned(next);
-            return next;
-          }
-          setInspectionActiveState(false);
-          stopInspector();
-          setHoverRect(null);
-          chrome.runtime.sendMessage({
-            type: 'INSPECTION_SET',
-            active: false,
-          } satisfies Message);
-          return prev;
-        });
+        handleEscape();
       }
     };
 
     chrome.runtime.onMessage.addListener(listener);
     return () => chrome.runtime.onMessage.removeListener(listener);
-  }, [setInspectionActive, persistPinned]);
+  }, [setInspectionActive, handleEscape]);
 
   const closeCard = useCallback(
     (id: string) => {
@@ -241,6 +246,7 @@ export function InspectionProvider({ children }: { children: ReactNode }) {
       closeCard,
       closeTopCard,
       closeAllUnpinned,
+      handleEscape,
       pinCard,
       updateCardPosition,
     }),
@@ -252,6 +258,7 @@ export function InspectionProvider({ children }: { children: ReactNode }) {
       closeCard,
       closeTopCard,
       closeAllUnpinned,
+      handleEscape,
       pinCard,
       updateCardPosition,
     ],

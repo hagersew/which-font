@@ -19,8 +19,7 @@ export default defineManifest(() => {
     version: '0.0.1',
     description:
       'Inspect any DOM element and instantly view its typography and styling details.',
-    permissions: ['storage', 'scripting', 'activeTab'],
-    host_permissions: ['<all_urls>'],
+    permissions: ['storage'],
     action: {
       default_title: 'Which Font? — Click to turn on inspection',
       default_icon: {
@@ -63,16 +62,6 @@ export default defineManifest(() => {
       '48': 'public/icons/icon48.png',
       '128': 'public/icons/icon128.png',
     },
-    web_accessible_resources: [
-      {
-        resources: [
-          'public/icons/on/icon16.png',
-          'public/icons/on/icon32.png',
-          'public/icons/on/icon48.png',
-        ],
-        matches: ['<all_urls>'],
-      },
-    ],
     ...(browser === 'firefox'
       ? {
         browser_specific_settings: {

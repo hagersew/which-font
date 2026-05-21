@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { HOST_ID, ROOT_ID } from '@/lib/constants';
 import { HighlightOverlay } from '@/components/HighlightOverlay';
 import { ClearSelectionButton } from '@/components/ClearSelectionButton';
-import { ThemeToggleButton } from '@/components/ThemeToggleButton';
+import { EscapeHint } from '@/components/EscapeHint';
 import { InspectCard } from '@/components/InspectCard';
 import { useThemeSync } from '@/hooks/useTheme';
 import { InspectionProvider, useInspection } from './context/InspectionContext';
@@ -28,6 +28,7 @@ function ContentShell() {
     cards,
     closeCard,
     closeAllUnpinned,
+    handleEscape,
     pinCard,
     updateCardPosition,
   } = useInspection();
@@ -53,18 +54,20 @@ function ContentShell() {
     return () => chrome.runtime.onMessage.removeListener(listener);
   }, [setColorMode]);
 
+  const hasUnpinnedCards = cards.some((card) => !card.pinned);
+  const showControls = inspectionActive || cards.length > 0;
+
   useEffect(() => {
+    if (!showControls) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        chrome.runtime.sendMessage({ type: 'CLOSE_CARDS' } satisfies import('@/lib/messaging').Message);
+        e.preventDefault();
+        handleEscape();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  const hasUnpinnedCards = cards.some((card) => !card.pinned);
-  const showControls = inspectionActive || cards.length > 0;
+  }, [showControls, handleEscape]);
 
   return (
     <Box
@@ -76,11 +79,7 @@ function ContentShell() {
       fontFamily="body"
       color="text.primary"
     >
-      <ThemeToggleButton
-        visible={showControls}
-        colorMode={resolvedMode}
-        onChange={setColorMode}
-      />
+      <EscapeHint visible={showControls} onEscape={handleEscape} />
       <ClearSelectionButton
         visible={inspectionActive && hasUnpinnedCards}
         onClear={closeAllUnpinned}
