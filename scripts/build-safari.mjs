@@ -30,7 +30,7 @@ execSync(
     '--project-location',
     projectLocation,
     '--app-name',
-    'Which Font',
+    'Which Font?',
     '--copy-resources',
     '--force',
   ].join(' '),

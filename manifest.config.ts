@@ -15,14 +15,14 @@ export default defineManifest(() => {
 
   return {
     manifest_version: 3,
-    name: 'Which Font',
+    name: 'Which Font?',
     version: '0.0.1',
     description:
       'Inspect any DOM element and instantly view its typography and styling details.',
     permissions: ['storage', 'scripting', 'activeTab'],
     host_permissions: ['<all_urls>'],
     action: {
-      default_title: 'Which Font — Click to turn on inspection',
+      default_title: 'Which Font? — Click to turn on inspection',
       default_icon: {
         '16': 'public/icons/off/icon16.png',
         '32': 'public/icons/off/icon32.png',

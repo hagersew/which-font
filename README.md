@@ -1,4 +1,4 @@
-# Which Font
+# Which Font?
 
 A Chrome extension (Manifest V3) that lets you inspect any DOM element and instantly view its typography and styling in a polished floating card.
 
@@ -62,7 +62,7 @@ Creates `chrome-artifacts/which-font-chrome-{version}.zip` from `dist/`.
 
 ## Usage
 
-1. Click the **Which Font** toolbar icon to turn inspection **ON** (icon becomes indigo ring)
+1. Click the **Which Font?** toolbar icon to turn inspection **ON** (icon becomes indigo ring)
 2. Hover elements to highlight them
 3. Click an element to open its style card
 4. Click the icon again to turn inspection **OFF** (icon becomes gray)
@@ -70,11 +70,11 @@ Creates `chrome-artifacts/which-font-chrome-{version}.zip` from `dist/`.
 
 ## Permissions
 
-| Permission | Why |
-|------------|-----|
-| `storage` | Theme, history, pinned cards |
-| `scripting` | Tab messaging |
-| `activeTab` | Active tab context |
+| Permission   | Why                          |
+| ------------ | ---------------------------- |
+| `storage`    | Theme, history, pinned cards |
+| `scripting`  | Tab messaging                |
+| `activeTab`  | Active tab context           |
 | `<all_urls>` | Inspect elements on any site |
 
 ## Project structure

@@ -14,8 +14,8 @@ export async function updateActionAppearance(active: boolean): Promise<void> {
   await chrome.action.setIcon({ path: iconPaths(state) });
   await chrome.action.setTitle({
     title: active
-      ? 'Which Font — Inspection ON (click to turn off)'
-      : 'Which Font — Inspection OFF (click to turn on)',
+      ? 'Which Font? — Inspection ON (click to turn off)'
+      : 'Which Font? — Inspection OFF (click to turn on)',
   });
   await chrome.action.setBadgeText({ text: '' });
 }
